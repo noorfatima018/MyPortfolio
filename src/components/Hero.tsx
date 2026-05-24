@@ -48,7 +48,11 @@ export const Hero = () => {
               View My Work
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </a>
-            <a href="#projects" className="px-8 py-3.5 rounded-full glass-panel hover:bg-white/5 text-foreground font-medium transition-all flex items-center gap-2 w-full sm:w-auto justify-center">
+            <a
+              href="/Noor_Fatima_CV.pdf"
+              download="Noor_Fatima_CV.pdf"
+              className="px-8 py-3.5 rounded-full glass-panel hover:bg-white/5 text-foreground font-medium transition-all flex items-center gap-2 w-full sm:w-auto justify-center"
+            >
               Download CV
               <Download size={18} />
             </a>
