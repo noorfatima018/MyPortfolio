@@ -476,6 +476,60 @@ export const CERTIFICATIONS = [
   },
 ];
 
+export const SERVICES = [
+  {
+    id: "mobile-dev",
+    icon: "📱",
+    title: "Mobile App Development",
+    description: "High-performance, cross-platform mobile applications built with Flutter and React Native. Delivering native-like experiences with a single codebase.",
+    gradient: "from-blue-500 to-cyan-500",
+    features: [
+      "Cross-platform (iOS & Android)",
+      "Custom UI/UX Design",
+      "API Integration",
+      "App Store Deployment"
+    ]
+  },
+  {
+    id: "web-dev",
+    icon: "💻",
+    title: "Web Development",
+    description: "Modern, responsive, and scalable web applications using React and Next.js. Focused on performance, SEO, and engaging user interfaces.",
+    gradient: "from-purple-500 to-pink-500",
+    features: [
+      "Responsive Single Page Apps",
+      "Server-Side Rendering (SSR)",
+      "Interactive Dashboards",
+      "E-commerce Platforms"
+    ]
+  },
+  {
+    id: "ai-integration",
+    icon: "🤖",
+    title: "AI & ML Solutions",
+    description: "Intelligent systems and integrations leveraging TensorFlow, Gemini AI, and custom machine learning models to automate and enhance processes.",
+    gradient: "from-orange-500 to-red-500",
+    features: [
+      "Computer Vision Models",
+      "LLM Integration",
+      "Data Analysis & Visualization",
+      "Predictive Algorithms"
+    ]
+  },
+  {
+    id: "backend-dev",
+    icon: "⚙️",
+    title: "Backend Architecture",
+    description: "Robust server-side solutions and RESTful APIs built with Python, Flask, and Node.js. Integrated with scalable databases like Firebase and MongoDB.",
+    gradient: "from-green-500 to-emerald-500",
+    features: [
+      "RESTful API Design",
+      "Database Modeling",
+      "Authentication Systems",
+      "Cloud Deployment (Vercel, Firebase)"
+    ]
+  }
+];
 
 export const STATS = [
   { label: "Projects Completed", value: 10, suffix: "+", icon: "rocket" },
@@ -511,4 +565,12 @@ export const FAQS = [
   },
 ];
 
-export const TESTIMONIALS: never[] = [];
+export const TESTIMONIALS = [
+  {
+    name: "John Doe",
+    role: "CEO, TechCorp",
+    avatar: "J",
+    rating: 5,
+    text: "Noor is an exceptional developer who delivered our project on time and exceeded our expectations.",
+  }
+];
