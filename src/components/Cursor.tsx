@@ -4,52 +4,67 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 export const Cursor = () => {
-  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
-  const [isHovering, setIsHovering] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [hovering, setHovering] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+    setMounted(true);
+    const onMouseMove = (e: MouseEvent) => {
+      setPosition({ x: e.clientX, y: e.clientY });
     };
 
-    const handleMouseOver = (e: MouseEvent) => {
+    const onMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target.tagName.toLowerCase() === "a" || target.tagName.toLowerCase() === "button" || target.closest("a") || target.closest("button")) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
-      }
+      const isInteractive =
+        target.tagName === "A" ||
+        target.tagName === "BUTTON" ||
+        target.closest("a") ||
+        target.closest("button") ||
+        target.classList.contains("clickable");
+      setHovering(!!isInteractive);
     };
 
-    window.addEventListener("mousemove", updateMousePosition);
-    window.addEventListener("mouseover", handleMouseOver);
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("mouseover", onMouseOver, { passive: true });
 
     return () => {
-      window.removeEventListener("mousemove", updateMousePosition);
-      window.removeEventListener("mouseover", handleMouseOver);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseover", onMouseOver);
     };
   }, []);
 
+  if (!mounted) return null;
+
   return (
     <>
+      {/* Outer Glow Ring */}
       <motion.div
-        className="fixed top-0 left-0 w-4 h-4 bg-brand-purple rounded-full pointer-events-none z-[100] mix-blend-screen shadow-[0_0_20px_4px_rgba(192,132,252,0.8)]"
-        animate={{
-          x: mousePosition.x - 8,
-          y: mousePosition.y - 8,
-          scale: isHovering ? 1.5 : 1,
+        className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[9999] hidden md:block"
+        style={{
+          border: "1.5px solid var(--accent)",
+          background: hovering ? "rgba(129, 140, 248, 0.15)" : "transparent",
         }}
-        transition={{ type: "spring", stiffness: 500, damping: 28, mass: 0.5 }}
+        animate={{
+          x: position.x - 16,
+          y: position.y - 16,
+          scale: hovering ? 1.5 : 1,
+        }}
+        transition={{ type: "spring", stiffness: 250, damping: 20, mass: 0.2 }}
       />
+
+      {/* Inner Dot */}
       <motion.div
-        className="fixed top-0 left-0 w-12 h-12 border-2 border-brand-purple-light rounded-full pointer-events-none z-[99] opacity-50"
+        className="fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none z-[9999] hidden md:block"
+        style={{ background: "var(--accent)" }}
         animate={{
-          x: mousePosition.x - 24,
-          y: mousePosition.y - 24,
-          scale: isHovering ? 1.5 : 1,
+          x: position.x - 4,
+          y: position.y - 4,
+          scale: hovering ? 0.5 : 1,
         }}
-        transition={{ type: "spring", stiffness: 250, damping: 20, mass: 0.8 }}
+        transition={{ type: "spring", stiffness: 450, damping: 28, mass: 0.1 }}
       />
     </>
   );
 };
+export default Cursor;

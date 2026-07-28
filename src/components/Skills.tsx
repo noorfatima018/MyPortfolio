@@ -2,46 +2,69 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { staggerContainer, bentoItem } from "@/lib/animations";
+import { bentoItem, staggerContainer } from "@/lib/animations";
+import { SKILLS } from "@/lib/data";
+import { Smartphone, Layout, Server, Cpu, Database, Wrench } from "lucide-react";
 
-const skills = [
-  "Flutter", "Dart", "React", "Next.js", "Python", "Machine Learning (CNNs)",
-  "JavaScript", "TypeScript", "Tailwind CSS", "Firebase", "MongoDB", "Figma", 
-  "UI/UX Design", "Flask", "Gemini AI"
-];
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  mobile: <Smartphone size={18} />,
+  layout: <Layout size={18} />,
+  server: <Server size={18} />,
+  cpu: <Cpu size={18} />,
+  database: <Database size={18} />,
+  tool: <Wrench size={18} />,
+};
 
 export const Skills = () => {
   return (
-    <section id="skills" className="py-24 max-w-4xl mx-auto px-6 relative z-10">
-      <div className="glass-panel p-8 md:p-14 rounded-[2rem] text-center">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={bentoItem}
-        >
-          <h2 className="text-3xl font-bold text-brand-text-main mb-6">
-            Technical Arsenal
+    <section id="skills" className="py-24 relative z-10">
+      <div className="section-container">
+        <div className="text-center mb-16">
+          <span className="section-label">Capabilities</span>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            Technical <span className="gradient-text">Arsenal</span>
           </h2>
-          <p className="text-brand-text-muted mb-10 max-w-2xl mx-auto">
-            From crafting mobile apps in Flutter to deploying ML models via Flask, here are the technologies I work with to bring ideas to life.
+          <p className="max-w-2xl mx-auto text-base" style={{ color: "var(--fg-muted)" }}>
+            Categorized technical skills and tools.
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div 
-          className="flex flex-wrap justify-center gap-3 md:gap-4"
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-50px" }}
         >
-          {skills.map((skill, index) => (
+          {SKILLS.map((category) => (
             <motion.div
-              key={index}
+              key={category.category}
               variants={bentoItem}
-              className="px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-brand-text-main text-sm font-medium hover:bg-brand-accent/20 hover:border-brand-accent/50 hover:text-white transition-all cursor-default"
+              className="glass-card p-6 rounded-2xl relative group"
             >
-              {skill}
+              <div className="flex items-center gap-3 mb-4">
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{ background: "var(--bg-tertiary)", color: "var(--accent)" }}
+                >
+                  {CATEGORY_ICONS[category.icon] ?? <Wrench size={18} />}
+                </div>
+                <h3 className="text-lg font-semibold" style={{ color: "var(--fg)" }}>
+                  {category.category}
+                </h3>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {category.skills.map((skill) => (
+                  <span
+                    key={skill.name}
+                    className="px-3 py-1.5 text-sm font-medium rounded-lg transition-colors hover:bg-opacity-80"
+                    style={{ background: "var(--bg-tertiary)", color: "var(--fg)" }}
+                  >
+                    {skill.name}
+                  </span>
+                ))}
+              </div>
             </motion.div>
           ))}
         </motion.div>

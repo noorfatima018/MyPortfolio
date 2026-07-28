@@ -1,149 +1,159 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { fadeBlurIn, staggerContainer } from "@/lib/animations";
-import { GitBranch, Briefcase, Mail, Send, CheckCircle2, AlertCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { FaGithub, FaLinkedin } from "react-icons/fa6";
+import { PERSONAL } from "@/lib/data";
 
 export const Contact = () => {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [sent, setSent] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("sending");
-    
-    try {
-      // We are using Web3Forms because FormSubmit is currently experiencing a server outage.
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            // IMPORTANT: Replace this with your actual access key from Web3Forms
-            access_key: "ad074abe-9e72-490b-abea-80f8cd591546", 
-            name: formData.name,
-            email: formData.email,
-            message: formData.message,
-            subject: `New message from ${formData.name} via Portfolio`,
-        })
-      });
-      
-      if (response.ok) {
-        setStatus("success");
-        setFormData({ name: "", email: "", message: "" });
-        setTimeout(() => setStatus("idle"), 5000); // Reset status after 5s
-      } else {
-        setStatus("error");
-        setTimeout(() => setStatus("idle"), 5000);
-      }
-    } catch (error) {
-      setStatus("error");
-      setTimeout(() => setStatus("idle"), 5000);
-    }
+    if (!formData.name || !formData.email || !formData.message) return;
+
+    // Use mailto with prefilled details
+    const subject = encodeURIComponent(`Portfolio Message from ${formData.name}`);
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+    );
+    window.open(`mailto:${PERSONAL.email}?subject=${subject}&body=${body}`);
+    setSent(true);
+    setFormData({ name: "", email: "", message: "" });
+    setTimeout(() => setSent(false), 5000);
   };
 
   return (
-    <section id="contact" className="py-24 max-w-4xl mx-auto px-6 relative z-10">
-      <motion.div 
-        className="glass-panel p-8 md:p-12 rounded-[2rem] text-center"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={staggerContainer}
-      >
-        <motion.h2 variants={fadeBlurIn} className="text-3xl md:text-5xl font-serif font-bold text-foreground mb-4">
-          Let's Build Something <br className="md:hidden" />
-          <span className="gradient-text animate-pulse">Beautiful Together ✨</span>
-        </motion.h2>
-        
-        <motion.p variants={fadeBlurIn} className="text-gray-400 mb-10 max-w-xl mx-auto">
-          Whether you have a question, a project idea, or just want to say hi, my inbox is always open. Let's connect!
-        </motion.p>
+    <section id="contact" className="py-24 relative z-10">
+      <div className="section-container">
+        <div className="text-center mb-16">
+          <span className="section-label">Connect</span>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            Get in <span className="gradient-text">Touch</span>
+          </h2>
+          <p className="max-w-2xl mx-auto text-base" style={{ color: "var(--fg-muted)" }}>
+            Have a project in mind, want to collaborate, or just want to say hi? Drop me a message!
+          </p>
+        </div>
 
-        <motion.form variants={fadeBlurIn} onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md mx-auto mb-10 text-left">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="name" className="text-sm font-medium text-gray-300 ml-2">Name</label>
-            <input 
-              type="text" 
-              id="name" 
-              name="name"
-              value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              required
-              disabled={status === "sending"}
-              placeholder="Your name" 
-              className="bg-[#0d1117]/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/50 transition-all disabled:opacity-50"
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-gray-300 ml-2">Email</label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email"
-              value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-              required
-              disabled={status === "sending"}
-              placeholder="Your email address" 
-              className="bg-[#0d1117]/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/50 transition-all disabled:opacity-50"
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="message" className="text-sm font-medium text-gray-300 ml-2">Message</label>
-            <textarea 
-              id="message" 
-              name="message"
-              rows={4}
-              value={formData.message}
-              onChange={(e) => setFormData({...formData, message: e.target.value})}
-              required
-              disabled={status === "sending"}
-              placeholder="How can I help you?" 
-              className="bg-[#0d1117]/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-brand-purple/50 focus:ring-1 focus:ring-brand-purple/50 transition-all resize-none disabled:opacity-50"
-            />
-          </div>
-          
-          <button 
-            type="submit"
-            disabled={status === "sending"}
-            className="mt-4 px-6 py-3.5 rounded-xl bg-brand-purple hover:bg-brand-purple-light text-white font-medium transition-colors flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {status === "idle" && (
-              <>Send Message <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></>
-            )}
-            {status === "sending" && "Sending..."}
-            {status === "success" && <><CheckCircle2 size={18} /> Sent Successfully!</>}
-            {status === "error" && <><AlertCircle size={18} /> Failed to send</>}
-          </button>
-          
-          {status === "success" && (
-            <p className="text-green-400 text-sm text-center mt-2">
-              Thank you for reaching out! I'll get back to you soon.
-            </p>
-          )}
-          {status === "error" && (
-            <p className="text-red-400 text-sm text-center mt-2">
-              Oops! Something went wrong. Please try again or email me directly.
-            </p>
-          )}
-        </motion.form>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Info Card */}
+          <div className="glass-card p-8 md:p-10 rounded-3xl flex flex-col justify-between">
+            <div>
+              <h3 className="text-2xl font-bold mb-6" style={{ color: "var(--fg)" }}>Let's talk!</h3>
+              <p className="text-base leading-relaxed mb-8" style={{ color: "var(--fg-muted)" }}>
+                I'm open to collaborations, remote positions, and open-source contributions. Shoot me an email or find me on socials!
+              </p>
 
-        <motion.div variants={fadeBlurIn} className="flex items-center justify-center gap-6 pt-8 border-t border-white/10">
-          <a href="https://github.com/noorfatima018" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-brand-purple transition-colors">
-            <GitBranch size={24} />
-          </a>
-          <a href="https://www.linkedin.com/in/noor-fatima-653aa3337" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-brand-purple transition-colors">
-            <Briefcase size={24} />
-          </a>
-          <a href="mailto:noor.fatima.212212@gmail.com" className="text-gray-400 hover:text-brand-purple transition-colors">
-            <Mail size={24} />
-          </a>
-        </motion.div>
-      </motion.div>
+              <div className="flex flex-col gap-5 mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: "var(--bg-tertiary)", color: "var(--accent)" }}>
+                    <Mail size={18} />
+                  </div>
+                  <div>
+                    <h4 className="text-xs" style={{ color: "var(--fg-subtle)" }}>Email</h4>
+                    <a href={`mailto:${PERSONAL.email}`} className="text-sm font-semibold hover:underline" style={{ color: "var(--fg)" }}>
+                      {PERSONAL.email}
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: "var(--bg-tertiary)", color: "var(--accent)" }}>
+                    <MapPin size={18} />
+                  </div>
+                  <div>
+                    <h4 className="text-xs" style={{ color: "var(--fg-subtle)" }}>Location</h4>
+                    <span className="text-sm font-semibold" style={{ color: "var(--fg)" }}>{PERSONAL.location}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <a
+                href={PERSONAL.github}
+                target="_blank"
+                rel="noreferrer"
+                className="p-3 rounded-full glass-panel hover:border-[var(--accent)] hover:text-white transition-colors"
+                style={{ color: "var(--fg-muted)" }}
+              >
+                <FaGithub size={18} />
+              </a>
+              <a
+                href={PERSONAL.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="p-3 rounded-full glass-panel hover:border-[var(--accent)] hover:text-white transition-colors"
+                style={{ color: "var(--fg-muted)" }}
+              >
+                <FaLinkedin size={18} />
+              </a>
+            </div>
+          </div>
+
+          {/* Form Card */}
+          <div className="glass-card p-8 md:p-10 rounded-3xl">
+            <h3 className="text-2xl font-bold mb-6" style={{ color: "var(--fg)" }}>Send a Message</h3>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold" style={{ color: "var(--fg-muted)" }}>Your Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="px-4 py-3 text-sm rounded-xl border bg-[var(--bg-secondary)] border-[var(--border)] focus:border-[var(--accent)] outline-none"
+                  style={{ color: "var(--fg)" }}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold" style={{ color: "var(--fg-muted)" }}>Email Address</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="john@example.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="px-4 py-3 text-sm rounded-xl border bg-[var(--bg-secondary)] border-[var(--border)] focus:border-[var(--accent)] outline-none"
+                  style={{ color: "var(--fg)" }}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold" style={{ color: "var(--fg-muted)" }}>Message</label>
+                <textarea
+                  required
+                  rows={4}
+                  placeholder="Tell me about your project..."
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  className="px-4 py-3 text-sm rounded-xl border bg-[var(--bg-secondary)] border-[var(--border)] focus:border-[var(--accent)] outline-none resize-none"
+                  style={{ color: "var(--fg)" }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-bold text-white transition-all cursor-pointer"
+                style={{ background: "linear-gradient(135deg, var(--gradient-1), var(--gradient-2))" }}
+              >
+                <Send size={16} />
+                Send via Email
+              </button>
+
+              {sent && (
+                <span className="text-xs text-center font-semibold" style={{ color: "#10b981" }}>
+                  Thank you! Redirecting to email client...
+                </span>
+              )}
+            </form>
+          </div>
+        </div>
+      </div>
     </section>
   );
 };

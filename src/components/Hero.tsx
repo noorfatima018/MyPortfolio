@@ -1,94 +1,217 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { fadeBlurIn } from "@/lib/animations";
-import { ArrowRight, Download, GitBranch, Briefcase, Mail } from "lucide-react";
-import { Typewriter } from "./Typewriter";
+import { fadeBlurIn, staggerSlow, fadeInUp } from "@/lib/animations";
+import { ArrowRight, Download, Mail, MapPin, Circle } from "lucide-react";
+import { FaGithub, FaLinkedin } from "react-icons/fa6";
 
-export const Hero = () => {
-  const phrases = [
-    "Full Stack Developer",
-    "Mobile Developer",
-    "UI/UX Enthusiast",
-    "Building aesthetic digital experiences"
-  ];
+const TYPING_PHRASES = [
+  "Flutter Developer",
+  "Full Stack Developer",
+  "UI/UX Enthusiast",
+  "AI/ML Explorer",
+  "Problem Solver",
+];
+
+const TypewriterEffect = () => {
+  const [index, setIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+  const [blink, setBlink] = useState(true);
+
+  useEffect(() => {
+    const blinkTimer = setInterval(() => setBlink((b) => !b), 500);
+    return () => clearInterval(blinkTimer);
+  }, []);
+
+  useEffect(() => {
+    const current = TYPING_PHRASES[index];
+    if (!deleting && subIndex === current.length) {
+      const t = setTimeout(() => setDeleting(true), 1800);
+      return () => clearTimeout(t);
+    }
+    if (deleting && subIndex === 0) {
+      setDeleting(false);
+      setIndex((i) => (i + 1) % TYPING_PHRASES.length);
+      return;
+    }
+    const speed = deleting ? 40 : 80;
+    const t = setTimeout(() => setSubIndex((s) => s + (deleting ? -1 : 1)), speed);
+    return () => clearTimeout(t);
+  }, [subIndex, deleting, index]);
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-24 pb-12 overflow-hidden px-6">
-      <div className="aurora-bg w-[600px] h-[600px] bg-brand-purple top-[-100px] left-[-200px]" />
-      <div className="aurora-bg w-[500px] h-[500px] bg-brand-purple-light bottom-[-100px] right-[-100px] animation-delay-2000" />
+    <span style={{ color: "var(--accent-light)" }}>
+      {TYPING_PHRASES[index].slice(0, subIndex)}
+      <span className="cursor-blink" style={{ color: "var(--accent)" }}>|</span>
+    </span>
+  );
+};
 
-      <div className="max-w-6xl mx-auto w-full relative z-10 flex flex-col md:flex-row items-center gap-12 md:gap-20">
-        {/* Text Content */}
-        <motion.div
-          className="flex-1 text-center md:text-left order-2 md:order-1"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
-          }}
-        >
-          <motion.div variants={fadeBlurIn} className="mb-4 inline-block px-4 py-1.5 rounded-full glass-panel text-brand-purple-light text-sm font-semibold tracking-wider">
-            Where creativity meets code 🌸
-          </motion.div>
+export const Hero = () => {
+  return (
+    <section
+      id="hero"
+      className="relative min-h-screen flex items-center justify-center pt-28 pb-16 overflow-hidden px-6"
+    >
+      {/* Aurora backgrounds */}
+      <div className="aurora-bg w-[700px] h-[700px] top-[-200px] left-[-200px]"
+        style={{ background: "var(--accent)" }} />
+      <div className="aurora-bg aurora-bg-2 w-[500px] h-[500px] bottom-[-100px] right-[-100px]"
+        style={{ background: "var(--gradient-2)" }} />
+      <div className="aurora-bg aurora-bg-3 w-[400px] h-[400px] top-[30%] left-[40%]"
+        style={{ background: "var(--brand-blue, #60a5fa)", opacity: 0.15 }} />
 
-          <motion.h1 variants={fadeBlurIn} className="text-5xl md:text-7xl font-serif font-bold text-foreground mb-4">
-            Hi, I'm <br />
-            <span className="gradient-text">Noor Fatima</span>
-          </motion.h1>
 
-          <motion.div variants={fadeBlurIn} className="text-xl md:text-2xl text-gray-300 font-light mb-8 h-8">
-            <Typewriter phrases={phrases} />
-          </motion.div>
 
-          <motion.div variants={fadeBlurIn} className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start mb-8">
-            <a href="#projects" className="px-8 py-3.5 rounded-full bg-brand-purple hover:bg-brand-purple-light text-white font-medium transition-all flex items-center gap-2 group w-full sm:w-auto justify-center">
-              View My Work
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </a>
-            <a
-              href="/Noor_Fatima_CV.pdf"
-              download="Noor_Fatima_CV.pdf"
-              className="px-8 py-3.5 rounded-full glass-panel hover:bg-white/5 text-foreground font-medium transition-all flex items-center gap-2 w-full sm:w-auto justify-center"
+      <div className="section-container w-full relative z-10">
+        <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
+          {/* Text Content */}
+          <motion.div
+            className="flex-1 text-center md:text-left order-2 md:order-1"
+            initial="hidden"
+            animate="visible"
+            variants={staggerSlow}
+          >
+            {/* Availability badge */}
+            <motion.div variants={fadeBlurIn} className="mb-6 flex items-center gap-3 justify-center md:justify-start flex-wrap">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel text-xs font-semibold tracking-wider"
+                style={{ color: "#4ade80" }}>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                  <Circle size={8} className="relative inline-flex rounded-full" fill="#4ade80" stroke="none" />
+                </span>
+                Open to Opportunities
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-panel text-xs"
+                style={{ color: "var(--fg-muted)" }}>
+                <MapPin size={12} /> Pakistan
+              </span>
+            </motion.div>
+
+            {/* Name */}
+            <motion.h1
+              variants={fadeBlurIn}
+              className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-4 leading-tight"
+              style={{ fontFamily: "var(--font-display)", color: "var(--fg)" }}
             >
-              Download CV
-              <Download size={18} />
-            </a>
+              Hi, I'm{" "}
+              <span className="gradient-text block sm:inline">Noor Fatima</span>
+            </motion.h1>
+
+            {/* Typewriter */}
+            <motion.div variants={fadeBlurIn} className="text-xl md:text-2xl font-light mb-4 h-9">
+              <TypewriterEffect />
+            </motion.div>
+
+            {/* Bio */}
+            <motion.p
+              variants={fadeBlurIn}
+              className="text-base md:text-lg mb-8 max-w-xl mx-auto md:mx-0 leading-relaxed"
+              style={{ color: "var(--fg-muted)" }}
+            >
+              I craft <span style={{ color: "var(--accent-light)" }}>beautiful digital experiences</span> — from
+              AI-powered apps to sleek Flutter mobile solutions. Turning ideas into production-ready products.
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div variants={fadeBlurIn} className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start mb-8">
+              <a
+                href="#projects"
+                className="group px-8 py-3.5 rounded-full font-semibold text-white transition-all flex items-center gap-2 w-full sm:w-auto justify-center shadow-lg hover:shadow-xl hover:-translate-y-1"
+                style={{ background: "var(--accent)" }}
+              >
+                View My Work
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </a>
+              <a
+                href="/Noor_Fatima_CV.pdf"
+                download
+                className="group px-8 py-3.5 rounded-full font-semibold transition-all flex items-center gap-2 w-full sm:w-auto justify-center glass-panel"
+                style={{ color: "var(--fg)" }}
+              >
+                <Download size={18} className="group-hover:-translate-y-0.5 transition-transform" />
+                Download CV
+              </a>
+            </motion.div>
+
+            {/* Social links */}
+            <motion.div variants={fadeBlurIn} className="flex items-center gap-4 justify-center md:justify-start">
+              {[
+                { href: "https://github.com/noorfatima018", icon: <FaGithub size={20} />, label: "GitHub" },
+                { href: "https://www.linkedin.com/in/noor-fatima-653aa3337/", icon: <FaLinkedin size={20} />, label: "LinkedIn" },
+                { href: "mailto:noor.fatima.212212@gmail.com", icon: <Mail size={20} />, label: "Email" },
+              ].map(({ href, icon, label }) => (
+                <motion.a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-3 rounded-full glass-panel transition-all group"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  aria-label={label}
+                >
+                  <span style={{ color: "var(--fg-muted)" }} className="group-hover:text-white transition-colors block"
+                    onMouseEnter={e => (e.currentTarget.style.color = "var(--accent-light)")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "var(--fg-muted)")}
+                  >
+                    {icon}
+                  </span>
+                </motion.a>
+              ))}
+
+            </motion.div>
           </motion.div>
 
-          <motion.div variants={fadeBlurIn} className="flex items-center gap-5 justify-center md:justify-start">
-            <a href="https://github.com/noorfatima018" target="_blank" rel="noreferrer" className="p-3 rounded-full glass-panel hover:bg-brand-purple/20 hover:border-brand-purple/50 transition-all group">
-              <GitBranch size={22} className="text-gray-300 group-hover:text-brand-purple-light transition-colors" />
-            </a>
-            <a href="https://www.linkedin.com/in/noor-fatima-653aa3337" target="_blank" rel="noreferrer" className="p-3 rounded-full glass-panel hover:bg-brand-purple/20 hover:border-brand-purple/50 transition-all group">
-              <Briefcase size={22} className="text-gray-300 group-hover:text-brand-purple-light transition-colors" />
-            </a>
-            <a href="mailto:noor.fatima.212212@gmail.com" className="p-3 rounded-full glass-panel hover:bg-brand-purple/20 hover:border-brand-purple/50 transition-all group">
-              <Mail size={22} className="text-gray-300 group-hover:text-brand-purple-light transition-colors" />
-            </a>
-          </motion.div>
-        </motion.div>
-
-        {/* Avatar Image */}
-        <motion.div
-          className="order-1 md:order-2 shrink-0 relative"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, type: "spring", bounce: 0.4 }}
-        >
-          <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full p-2 bg-gradient-to-br from-brand-purple to-pink-500 animate-[spin_10s_linear_infinite]">
-            <div className="w-full h-full rounded-full bg-brand-base-bg p-2">
-              <img
-                src="/Avatar.png"
-                alt="Noor Fatima"
-                className="w-full h-full object-cover rounded-full animate-[spin_10s_linear_infinite_reverse]"
-              />
+          {/* Avatar */}
+          <motion.div
+            className="order-1 md:order-2 shrink-0 relative"
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.9, type: "spring", bounce: 0.3, delay: 0.3 }}
+          >
+            {/* Solid border */}
+            <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full"
+              style={{
+                padding: 4,
+                background: "var(--accent)",
+              }}>
+              <div className="w-full h-full rounded-full p-1"
+                style={{ background: "var(--bg)" }}>
+                <img
+                  src="https://avatars.githubusercontent.com/u/187599428?v=4"
+                  alt="Noor Fatima — Flutter & Full Stack Developer"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              </div>
             </div>
-          </div>
-        </motion.div>
+
+            {/* Floating badges */}
+            <motion.div
+              className="absolute -right-4 top-8 glass-panel rounded-2xl px-3 py-2 text-xs font-semibold flex items-center gap-2"
+              animate={{ y: [0, -6, 0] }}
+              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+              style={{ color: "var(--fg)" }}
+            >
+              <span>10+</span>
+              <span style={{ color: "var(--fg-muted)" }}>Projects</span>
+            </motion.div>
+
+            <motion.div
+              className="absolute -left-6 bottom-12 glass-panel rounded-2xl px-3 py-2 text-xs font-semibold flex items-center gap-2"
+              animate={{ y: [0, 6, 0] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 1 }}
+              style={{ color: "var(--fg)" }}
+            >
+              <span>15+</span>
+              <span style={{ color: "var(--fg-muted)" }}>Technologies</span>
+            </motion.div>
+          </motion.div>
+        </div>
       </div>
+
     </section>
   );
 };

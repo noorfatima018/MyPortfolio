@@ -1,30 +1,57 @@
+"use client";
+
+import React, { useState } from "react";
+import { Cursor } from "@/components/Cursor";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
-import { TechStack } from "@/components/TechStack";
+
+import { Skills } from "@/components/Skills";
+import { Experience } from "@/components/Experience";
+import { Education } from "@/components/Education";
+import { Certifications } from "@/components/Certifications";
 import { Projects } from "@/components/Projects";
-import { Services } from "@/components/Services";
+import { GithubStats } from "@/components/GithubStats";
 import { Contact } from "@/components/Contact";
-import { Cursor } from "@/components/Cursor";
+import { Footer } from "@/components/Footer";
+import { LoadingScreen } from "@/components/LoadingScreen";
+import { CommandPalette } from "@/components/CommandPalette";
+import { BackToTop } from "@/components/BackToTop";
+import { AnimatePresence } from "framer-motion";
 
 export default function Home() {
-  return (
-    <main className="min-h-screen relative overflow-hidden bg-brand-base-bg">
-      <Cursor />
-      <Navbar />
-      
-      <Hero />
-      <About />
-      <TechStack />
-      <Services />
-      <Projects />
-      <Contact />
+  const [loading, setLoading] = useState(true);
 
-      <footer className="py-8 text-center text-gray-500 text-sm relative z-10 border-t border-white/5 mt-10">
-        <p className="flex items-center justify-center gap-1 group">
-          Designed & Built by Noor Fatima <span className="inline-block group-hover:scale-125 transition-transform duration-300 text-pink-500">🌸</span>
-        </p>
-      </footer>
-    </main>
+  return (
+    <>
+      <AnimatePresence mode="wait">
+        {loading ? (
+          <LoadingScreen key="loading" onDone={() => setLoading(false)} />
+        ) : (
+          <main key="main" className="min-h-screen relative overflow-hidden bg-[var(--bg)] page-enter">
+            <Cursor />
+            <Navbar />
+            <CommandPalette />
+            <BackToTop />
+
+            {/* Aurora Background blobs */}
+            <div className="aurora-bg w-[600px] h-[600px] top-[-100px] left-[-200px]"
+              style={{ background: "var(--accent)" }} />
+            <div className="aurora-bg aurora-bg-2 w-[500px] h-[500px] bottom-[-100px] right-[-100px]"
+              style={{ background: "var(--gradient-2)" }} />
+
+            <Hero />
+            <About />
+            <Skills />
+            <Experience />
+            <Education />
+            <Certifications />
+            <Projects />
+            <Contact />
+            <Footer />
+          </main>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
